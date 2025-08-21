@@ -75,7 +75,7 @@ class BankDataGen:
         Ensures the table is overwritten, not appended
         """
         # Define the table name
-        table_name = "{0}.BANK_MARKETING_{1}".format(self.dbname, self.username)
+        table_name = "{0}.MKT_{1}".format(self.dbname, self.username)
         
         # Explicitly drop the table if it exists (optional but ensures a clean slate)
         spark = df.sparkSession
@@ -105,7 +105,7 @@ class BankDataGen:
 
 def main():
     USERNAME = os.environ["PROJECT_OWNER"]
-    DBNAME = "BNK_MLOPS_HOL_{}".format(USERNAME)
+    DBNAME = "MLOPS_{}".format(USERNAME)
     CONNECTION_NAME = os.environ["CONNECTION_NAME"]
     
     bank_gen = BankDataGen(USERNAME, DBNAME, CONNECTION_NAME)
@@ -114,7 +114,7 @@ def main():
     bank_gen.createDatabase(spark)
     bank_gen.ingestRawData(spark, local_path="data/bank-full.csv")
     bank_gen.validateTable(spark)
-    spark.sql(f"SELECT * FROM {DBNAME}.BANK_MARKETING_{USERNAME} LIMIT 5").show()
+    spark.sql(f"SELECT * FROM {DBNAME}.MKT_{USERNAME} LIMIT 5").show()
     spark.stop()
 
 if __name__ == '__main__':

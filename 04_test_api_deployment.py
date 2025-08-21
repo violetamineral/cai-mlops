@@ -76,7 +76,7 @@ else:
 deployment = ModelDeployment(client, projectId, USERNAME, experimentName, experimentId)
 
 modelPath = "artifacts"
-modelName = "bank-promo-" + USERNAME
+modelName = "bank-test-" + USERNAME
 
 # Register model from experiment run
 registeredModelResponse = deployment.registerModelFromExperimentRun(modelName, experimentId, experimentRunId, modelPath)
@@ -89,16 +89,21 @@ modelVersionId = registeredModelResponse.model_versions[0].model_version_id
 # Create model and build
 createModelResponse = deployment.createModel(projectId, modelName, modelId)
 modelCreationId = createModelResponse.id
+#modelCreationId = getLatestDeploymentResponse["model_id"]
+#modelCreationId = deployment.get_latest_deployment_details(modelName)
+
 
 runtimeId = "docker.repository.cloudera.com/cloudera/cdsw/ml-runtime-pbj-workbench-python3.10-standard:2025.06.1-b5"
+#runtimeId = "docker.repository.cloudera.com/cloudera/cdsw/ml-runtime-pbj-workbench-python3.10-standard:2025.06.1-b5"
+#runtimeId = "docker.repository.cloudera.com/cloudera/cdsw/ml-runtime-workbench-python3.9-standard:2024.10.1-b12" #Modify as needed
 
-# Set resource requirements
-cpu = 1
-mem = 2
-replicas = 2
-
-createModelBuildResponse = deployment.createModelBuild(projectId, modelVersionId, modelCreationId, runtimeId, cpu, mem, replicas)
+createModelBuildResponse = deployment.createModelBuild(projectId, modelVersionId, modelCreationId, runtimeId)
+#createModelBuildResponse = deployment.createModelBuild(projectId, modelVersionId, modelCreationId, runtimeId, cpu, mem, replicas)
 modelBuildId = createModelBuildResponse.id
 
 # Deploy the model
 deployment.createModelDeployment(modelBuildId, projectId, modelCreationId)
+
+## NOW TRY A REQUEST WITH THIS PAYLOAD!
+#{"dataframe_split": {"columns": ["age", "credit_card_balance", "bank_account_balance", "mortgage_balance", "sec_bank_account_balance", "savings_account_balance", "sec_savings_account_balance", "total_est_nworth", "primary_loan_balance", "secondary_loan_balance", "uni_loan_balance", "longitude", "latitude", "transaction_amount"], "data":[[35.5, 20000.5, 3900.5, 14000.5, 2944.5, 3400.5, 12000.5, 29000.5, 1300.5, 15000.5, 10000.5, 2000.5, 90.5, 120.5]]}}
+

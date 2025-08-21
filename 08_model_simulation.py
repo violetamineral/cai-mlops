@@ -168,7 +168,7 @@ import datetime
 
 # SET USER VARIABLES
 USERNAME = os.environ["PROJECT_OWNER"]
-DBNAME = "BNK_MLOPS_HOL_{}".format(USERNAME)
+DBNAME = "MLOPS_{}".format(USERNAME)
 CONNECTION_NAME = os.environ["CONNECTION_NAME"]
 
 # Instantiate BankDataGen class

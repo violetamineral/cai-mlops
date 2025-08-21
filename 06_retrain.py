@@ -52,7 +52,7 @@ from pyspark.ml.feature import StringIndexer
 
 # Setup
 USERNAME = os.environ["PROJECT_OWNER"]
-DBNAME = "BNK_MLOPS_HOL_{}".format(USERNAME)
+DBNAME = "MLOPS_{}".format(USERNAME)
 CONNECTION_NAME = os.environ["CONNECTION_NAME"]
 TIMESTAMP = datetime.now().strftime("%Y%m%d_%H%M%S")
 EXPERIMENT_NAME = f"xgb-bank-marketing-incremental-{USERNAME}"
@@ -65,7 +65,7 @@ spark = conn.get_spark_session()
 
 # Read Iceberg metadata to get the latest snapshot and its parent
 print("Reading Iceberg table metadata...")
-table_path = f"{DBNAME}.BANK_MARKETING_{USERNAME}"
+table_path = f"{DBNAME}.MKT_{USERNAME}"
 snapshots_df = spark.read.format("iceberg").load(f"{table_path}.snapshots")
 snapshots_df = snapshots_df.orderBy("committed_at", ascending=False)
 

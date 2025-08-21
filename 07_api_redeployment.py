@@ -174,7 +174,7 @@ class ModelReDeployment():
 
 # Main script execution
 USERNAME = os.environ["PROJECT_OWNER"]
-DBNAME = "BNK_MLOPS_HOL_{}".format(USERNAME)
+DBNAME = "MLOPS_{}".format(USERNAME)
 CONNECTION_NAME = os.environ["CONNECTION_NAME"]
 projectId = os.environ['CDSW_PROJECT_ID']
 
@@ -215,6 +215,8 @@ try:
     print("Registering new model version from experiment run...")
     registeredModelResponse = deployment.registerModelFromExperimentRun(modelName, experimentId, experimentRunId, modelPath)
     
+    time.sleep(20)
+    
     modelId = registeredModelResponse.model_id
     modelVersionId = registeredModelResponse.model_versions[0].model_version_id
     print(f"Registered new model version ID: {modelVersionId}")
@@ -223,14 +225,14 @@ try:
     modelCreationId = latestDeploymentDetails["model_id"]
     
     # Set resource requirements
-    cpu = 2
-    mem = 4
-    replicas = 1
+    cpu = 1
+    mem = 2
+    replicas = 2
     
     # Specify runtime
     # runtimeId = "docker.repository.cloudera.com/cloudera/cdsw/ml-runtime-jupyterlab-python3.10-standard:2023.05.1-b4"
 
-    runtimeId = "docker.repository.cloudera.com/cloudera/cdsw/ml-runtime-workbench-python3.9-standard:2024.10.1-b12" 
+    runtimeId = "docker.repository.cloudera.com/cloudera/cdsw/ml-runtime-pbj-workbench-python3.10-standard:2025.06.1-b5" 
     
     # Create model build
     print("Creating new model build...")

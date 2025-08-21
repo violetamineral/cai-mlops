@@ -50,12 +50,15 @@ import cml.data_v1 as cmldata
 from pyspark.sql.functions import col
 from pyspark.ml.feature import StringIndexer
 
+from mlflow.models.signature import infer_signature
+
+
 # Setup
 USERNAME = os.environ["PROJECT_OWNER"]
-DBNAME = "BNK_MLOPS_HOL_{}".format(USERNAME)
+DBNAME = "MLOPS_{}".format(USERNAME)
 CONNECTION_NAME = os.environ["CONNECTION_NAME"]
 TIMESTAMP = datetime.now().strftime("%Y%m%d_%H%M%S")
-EXPERIMENT_NAME = f"xgb-bank-marketing-{USERNAME}"
+EXPERIMENT_NAME = f"xgb_bank_{USERNAME}"
 
 mlflow.set_experiment(EXPERIMENT_NAME)
 
@@ -64,7 +67,7 @@ conn = cmldata.get_connection(CONNECTION_NAME)
 spark = conn.get_spark_session()
 
 # Load raw table
-df_spark = spark.table(f"{DBNAME}.BANK_MARKETING_{USERNAME}")
+df_spark = spark.table(f"{DBNAME}.MKT_{USERNAME}")
 
 # Define features
 numerical_cols = ["age", "balance", "day", "duration", "campaign", "pdays", "previous"]
@@ -103,7 +106,7 @@ X_train, X_test, y_train, y_test = train_test_split(
 max_depths = [3, 5, 7]
 learning_rates = [0.01, 0.1]
 alphas = [0, 0.1, 1]
-hyperparams = [(md, lr, a) for md in max_depths for lr in learning_rates for a in alphas][:12]
+hyperparams = [(md, lr, a) for md in max_depths for lr in learning_rates for a in alphas][:3]
 
 # Train and evaluate models
 for max_depth, learning_rate, alpha in hyperparams:
@@ -153,8 +156,12 @@ for max_depth, learning_rate, alpha in hyperparams:
         
         mlflow.log_metric("train_accuracy", train_accuracy)
         mlflow.log_metric("test_accuracy", test_accuracy)
+
+        signature = infer_signature(X_train, model.predict(X_train))
+
+        mlflow.xgboost.log_model(model, artifact_path="artifacts", signature=signature)
         
-        mlflow.xgboost.log_model(model, artifact_path="artifacts")
+
 
 # Latest experiment info
 def getLatestExperimentInfo(experimentName):

@@ -48,7 +48,7 @@ from pyspark.sql.functions import col, rand, expr
 
 # Setup
 USERNAME = os.environ["PROJECT_OWNER"]
-DBNAME = "BNK_MLOPS_HOL_{}".format(USERNAME)
+DBNAME = "MLOPS_{}".format(USERNAME)
 CONNECTION_NAME = os.environ["CONNECTION_NAME"]
 
 # Connect to Spark
@@ -56,7 +56,7 @@ conn = cmldata.get_connection(CONNECTION_NAME)
 spark = conn.get_spark_session()
 
 print("Loading original data from Iceberg table...")
-table_name = f"{DBNAME}.BANK_MARKETING_{USERNAME}"
+table_name = f"{DBNAME}.MKT_{USERNAME}"
 df_spark = spark.table(table_name)
 
 # Store current record count for verification
